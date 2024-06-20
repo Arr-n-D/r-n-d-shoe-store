@@ -13,10 +13,7 @@ class WebSocketClient
     protected $loop;
     private ReactConnector $reactConnector;
     private RatchetConnector $ratchetConnector;
-
-    /**
-     * Create a new class instance.
-     */
+    
     public function __construct(string $host, int $port)
     {
         $this->host = $host;
@@ -30,7 +27,7 @@ class WebSocketClient
     public function run()
     {
         $connector = $this->ratchetConnector;
-        $connector('ws://Renaud2-PC:8080')->then(function ($conn) {
+        $connector("ws://{$this->host}:{$this->port}")->then(function ($conn) {
             $conn->on('message', function ($msg) {
                 echo "Received: {$msg}\n";
             });
