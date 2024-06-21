@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\InventoryUpdatedEvent;
 use React\EventLoop\Loop;
 use React\Socket\Connector as ReactConnector;
 use Ratchet\Client\Connector as RatchetConnector;
@@ -29,7 +30,7 @@ class WebSocketClient
         $connector = $this->ratchetConnector;
         $connector("ws://{$this->host}:{$this->port}")->then(function ($conn) {
             $conn->on('message', function ($msg) {
-                echo "Received: {$msg}\n";
+                event(new InventoryUpdatedEvent(json_decode($msg, true)));
             });
 
             $conn->on('close', function ($code = null, $reason = null) {
