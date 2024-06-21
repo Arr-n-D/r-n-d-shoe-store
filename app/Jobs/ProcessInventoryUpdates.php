@@ -31,10 +31,13 @@ class ProcessInventoryUpdates implements ShouldQueue
             return;
         }
 
+
+        // @TODO: #1 Bundle up the transactions into a UPDATE query for the database to avoid hitting it with a query for each transaction
         foreach ($transactions as &$transaction) {
             $chain[] = new UpdateStoreInventory($transaction);
         }
 
+        
         // Bus batch the jobs
         Bus::batch($chain)
             ->then(function (Batch $batch) use ($transactions) {

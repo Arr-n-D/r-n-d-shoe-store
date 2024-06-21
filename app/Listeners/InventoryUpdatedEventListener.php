@@ -36,8 +36,7 @@ class InventoryUpdatedEventListener
         $transactions[] = [
             'store' => $store->id,
             'shoe' => $shoe->id,
-            'quantity' => $event->quantity,
-            'processed' => false,
+            'quantity' => $event->quantity
         ];
 
         // If duplicate store AND shoe are found in the transactions, only keep the last one
