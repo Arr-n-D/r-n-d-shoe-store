@@ -31,9 +31,12 @@ class ProcessInventoryUpdates implements ShouldQueue
             return;
         }
 
-        var_dump($transactions);
-
-        // @TODO: #1 Bundle up the transactions into a UPDATE query for the database to avoid hitting it with a query for each transaction
+        /** 
+         * @TODO: #1 Bundle up the transactions into a UPDATE query for the database to avoid hitting it with a query for each transaction
+         * Currently we're hitting the database with a query for each transaction. This is not efficient.
+         * We could use DB::raw to write more efficient queries, but given that we do not have hundreds of thousands of transactions
+         * we can continue to use individual queries for now, beware of premature optimization.
+         * */
         foreach ($transactions as &$transaction) {
             $chain[] = new UpdateStoreInventory($transaction);
         }

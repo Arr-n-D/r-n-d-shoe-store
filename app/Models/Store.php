@@ -10,4 +10,11 @@ class Store extends Model
     use HasFactory;
 
     protected $fillable = ['name'];
+
+    public function inventory()
+    {
+        return $this->hasMany(StoreInventory::class);
+    }
+
+    
 }

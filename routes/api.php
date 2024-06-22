@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StoreInventoryController;
 
-Route::get('/test', function (Request $request) {
-    return response()->json(['message' => 'Hello World!']);
-});
+// make a route for the /store/{store} endpoint
+Route::get('/store/{store}', [StoreInventoryController::class, 'show']);

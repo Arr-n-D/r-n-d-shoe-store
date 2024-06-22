@@ -9,27 +9,21 @@ use Illuminate\Support\Facades\Cache;
 
 class InventoryUpdatedEventListener
 {
-    /**
-     * Create the event listener.
-     */
     public function __construct()
     {
         //
     }
 
-    /**
-     * Handle the event.
-     */
     public function handle(InventoryUpdatedEvent $event): void
     {
-        $store = Cache::remember($event->store, 60, function () use ($event) {
+        $store = Cache::remember($event->store, 120, function () use ($event) {
             return Store::firstWhere('name', $event->store);
         });
 
-        $shoe = Cache::remember($event->shoe, 60, function () use ($event) {
+        $shoe = Cache::remember($event->shoe, 120, function () use ($event) {
             return Shoe::firstWhere('name', $event->shoe);
         });
-        
+
         // add update to transactions of Redis queue    
         $transactions = Cache::get('store_inventory_transactions', []);
 
@@ -39,7 +33,16 @@ class InventoryUpdatedEventListener
             'quantity' => $event->quantity
         ];
 
-        Cache::put('store_inventory_transactions', $transactions);
+        /** 
+         * If duplicate store AND shoe are found in the transactions, only keep the last transaction when store and shoe are the same
+         * Duplicates are actually okay to remove as since we're filling out the database with the transactions, we'd only get the latest transaction in the database. 
+         * */
 
+        $uniqueTransactions = collect($transactions)->reverse()
+            ->unique(function ($transaction) {
+                return $transaction['store'] . $transaction['shoe'];
+            })->reverse()->values()->toArray();
+
+        Cache::put('store_inventory_transactions', $uniqueTransactions);
     }
 }

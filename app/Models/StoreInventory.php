@@ -10,4 +10,14 @@ class StoreInventory extends Model
     use HasFactory;
 
     protected $fillable = ['store_id', 'shoe_id', 'quantity'];
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
+
+    public function shoe()
+    {
+        return $this->belongsTo(Shoe::class);
+    }
 }
