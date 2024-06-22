@@ -39,11 +39,6 @@ class InventoryUpdatedEventListener
             'quantity' => $event->quantity
         ];
 
-        // If duplicate store AND shoe are found in the transactions, only keep the last one
-        $transactions = collect($transactions)->unique(function ($transaction) {
-            return $transaction['store'] . $transaction['shoe'];
-        })->values()->toArray();
-
         Cache::put('store_inventory_transactions', $transactions);
 
     }

@@ -31,6 +31,7 @@ class ProcessInventoryUpdates implements ShouldQueue
             return;
         }
 
+        var_dump($transactions);
 
         // @TODO: #1 Bundle up the transactions into a UPDATE query for the database to avoid hitting it with a query for each transaction
         foreach ($transactions as &$transaction) {
@@ -42,13 +43,6 @@ class ProcessInventoryUpdates implements ShouldQueue
         Bus::batch($chain)
             ->then(function (Batch $batch) use ($transactions) {
                 $existingTransactions = Cache::get('store_inventory_transactions', []);
-                // print the first 3 existing transactions
-                var_dump(array_slice($existingTransactions, 0, 3));
-                // print the first 3 transactions
-                var_dump(array_slice($transactions, 0, 3));
-
-
-
                 $newTransactions = array_diff_key($existingTransactions, $transactions);
                 Cache::put('store_inventory_transactions', $newTransactions);
             
