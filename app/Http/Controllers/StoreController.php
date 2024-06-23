@@ -6,7 +6,7 @@ use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class StoreInventoryController extends Controller
+class StoreController extends Controller
 {
     /**
      * Display the specified resource.
