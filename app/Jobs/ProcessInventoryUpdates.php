@@ -41,8 +41,6 @@ class ProcessInventoryUpdates implements ShouldQueue
             $chain[] = new UpdateStoreInventory($transaction);
         }
 
-
-        // Bus batch the jobs
         Bus::batch($chain)
             ->then(function () use ($transactions) {
                 $existingTransactions = Cache::get('store_inventory_transactions', []);

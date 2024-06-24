@@ -25,7 +25,6 @@ class TestSocket extends Command
      */
     public function handle()
     {
-        //
         app(\App\WebSocketClient::class)->run();
     }
 }

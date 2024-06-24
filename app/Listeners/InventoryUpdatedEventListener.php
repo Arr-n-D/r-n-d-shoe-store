@@ -16,11 +16,12 @@ class InventoryUpdatedEventListener
 
     public function handle(InventoryUpdatedEvent $event): void
     {
-        $store = Cache::remember($event->store, 120, function () use ($event) {
+
+        $store = Cache::remember($event->store . ' name', 120, function () use ($event) {
             return Store::firstWhere('name', $event->store);
         });
 
-        $shoe = Cache::remember($event->shoe, 120, function () use ($event) {
+        $shoe = Cache::remember($event->shoe . ' name', 120, function () use ($event) {
             return Shoe::firstWhere('name', $event->shoe);
         });
 
@@ -30,14 +31,15 @@ class InventoryUpdatedEventListener
         $transactions[] = [
             'store' => $store->id,
             'shoe' => $shoe->id,
-            'quantity' => $event->quantity
+            'quantity' => $event->quantity,
+            'store_name' => $store->name,
+            'shoe_name' => $shoe->name
         ];
 
         /** 
          * If duplicate store AND shoe are found in the transactions, only keep the last transaction when store and shoe are the same
          * Duplicates are actually okay to remove as since we're filling out the database with the transactions, we'd only get the latest transaction in the database. 
          * */
-
         $uniqueTransactions = collect($transactions)->reverse()
             ->unique(function ($transaction) {
                 return $transaction['store'] . $transaction['shoe'];

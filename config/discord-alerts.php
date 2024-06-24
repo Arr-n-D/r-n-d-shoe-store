@@ -6,6 +6,7 @@ return [
      */
     'webhook_urls' => [
         'default' => env('DISCORD_ALERT_WEBHOOK'),
+        'low-inventory' => env('DISCORD_ALERT_LOW_INVENTORY_WEBHOOK'),
     ],
 
     /*

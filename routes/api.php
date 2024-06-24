@@ -19,27 +19,33 @@ Route::get('/inventory', [InventoryController::class, 'index']);
 //             ->orderBy('quantity')
 //             ->get();
 //     });
-
+    
 //     $inventory = InventoryResource::collection($inventory);
-
+    
 //     // make an inventory array for each store
 //     $inventoryByStore = $inventory->groupBy('store_id');
-
-//     // make a map of embeds for each store, using the store name, the shoe model and the quantity for that shoe model
+    
+    
 //     $embeds = $inventoryByStore->map(function ($inventory, $storeId) {
-//         // Assuming StoreInventory model has 'store' relation with 'name' attribute
+    
+//         // fix this, the store name should be gotten in the second map 
 //         $storeName = $inventory->first()->store->name ?? 'Store ' . $storeId;
-
+    
 //         $description = $inventory->map(function ($item) {
-//             // Assuming 'shoe' relation has 'name' attribute and 'quantity' is directly accessible
 //             return $item->shoe->name . ' (Quantity: ' . $item->quantity . ')';
 //         })->implode("\n"); // Changed from ', ' to "\n" for new lines
-
+    
 //         return [
 //             'title' => $storeName,
 //             'description' => $description,
 //         ];
 //     });
+    
+//     $embedsArray = $embeds->toArray();
+//     $array = [];
+//     foreach ($embeds as $embed) {
+//         $array[] = $embed;
+//     }
 
-//     return $embeds->toArray();
+//     return $array;
 // });

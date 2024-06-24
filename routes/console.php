@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schedule;
 
 
-$inventory = Cache::remember('inventory', 30, function () {
+$inventory = Cache::remember('inventory', 10, function () {
     return StoreInventory::with('store', 'shoe')
         ->orderBy('store_id')
         ->orderBy('quantity')
@@ -22,13 +22,11 @@ $inventoryByStore = $inventory->groupBy('store_id');
 
 
 $embeds = $inventoryByStore->map(function ($inventory, $storeId) {
-
-    // fix this, the store name should be gotten in the second map 
     $storeName = $inventory->first()->store->name ?? 'Store ' . $storeId;
 
     $description = $inventory->map(function ($item) {
         return $item->shoe->name . ' (Quantity: ' . $item->quantity . ')';
-    })->implode("\n"); // Changed from ', ' to "\n" for new lines
+    })->implode("\n");
 
     return [
         'title' => $storeName,
@@ -36,6 +34,7 @@ $embeds = $inventoryByStore->map(function ($inventory, $storeId) {
     ];
 });
 
+// this is some whack issue
 $embedsArray = $embeds->toArray();
 $array = [];
 foreach ($embeds as $embed) {
@@ -43,10 +42,12 @@ foreach ($embeds as $embed) {
 }
 
 
-Schedule::job(new ProcessInventoryUpdates)->everyThirtySeconds();
+Schedule::job(new ProcessInventoryUpdates)->everyFifteenSeconds();
 
-// foreach ($embeds as $embed) {
+// if array is not empty, send a message
+if (!empty($array)) {
     Schedule::job(function () use ($array) {
-        DiscordAlert::message('Inventory status', $array);
+        $now = now();
+        DiscordAlert::message("Inventory status for $now", $array);
     })->everyThirtySeconds();
-// }
+}
