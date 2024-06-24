@@ -10,34 +10,36 @@ use Illuminate\Support\Facades\Cache;
 
 Route::get('/store/{store}', [StoreController::class, 'show']);
 Route::get('/inventory', [InventoryController::class, 'index']);
-Route::get('/', function () {
-    $inventory = Cache::remember('inventory', 30, function () {
-        return StoreInventory::with('store', 'shoe')
-            ->orderBy('store_id')
-            ->orderBy('quantity')
-            ->get();
-    });
 
-    $inventory = InventoryResource::collection($inventory);
 
-    // make an inventory array for each store
-    $inventoryByStore = $inventory->groupBy('store_id');
+// Route::get('/', function () {
+//     $inventory = Cache::remember('inventory', 30, function () {
+//         return StoreInventory::with('store', 'shoe')
+//             ->orderBy('store_id')
+//             ->orderBy('quantity')
+//             ->get();
+//     });
 
-    // make a map of embeds for each store, using the store name, the shoe model and the quantity for that shoe model
-    $embeds = $inventoryByStore->map(function ($inventory, $storeId) {
-        // Assuming StoreInventory model has 'store' relation with 'name' attribute
-        $storeName = $inventory->first()->store->name ?? 'Store ' . $storeId;
+//     $inventory = InventoryResource::collection($inventory);
 
-        $description = $inventory->map(function ($item) {
-            // Assuming 'shoe' relation has 'name' attribute and 'quantity' is directly accessible
-            return $item->shoe->name . ' (Quantity: ' . $item->quantity . ')';
-        })->implode("\n"); // Changed from ', ' to "\n" for new lines
+//     // make an inventory array for each store
+//     $inventoryByStore = $inventory->groupBy('store_id');
 
-        return [
-            'title' => $storeName,
-            'description' => $description,
-        ];
-    });
+//     // make a map of embeds for each store, using the store name, the shoe model and the quantity for that shoe model
+//     $embeds = $inventoryByStore->map(function ($inventory, $storeId) {
+//         // Assuming StoreInventory model has 'store' relation with 'name' attribute
+//         $storeName = $inventory->first()->store->name ?? 'Store ' . $storeId;
 
-    return $embeds->toArray();
-});
+//         $description = $inventory->map(function ($item) {
+//             // Assuming 'shoe' relation has 'name' attribute and 'quantity' is directly accessible
+//             return $item->shoe->name . ' (Quantity: ' . $item->quantity . ')';
+//         })->implode("\n"); // Changed from ', ' to "\n" for new lines
+
+//         return [
+//             'title' => $storeName,
+//             'description' => $description,
+//         ];
+//     });
+
+//     return $embeds->toArray();
+// });
